@@ -5,6 +5,8 @@ import com.cinefy.Cinefy.dao.UserRepository;
 import com.cinefy.Cinefy.dto.MovieDTO;
 import com.cinefy.Cinefy.model.Movie;
 import com.cinefy.Cinefy.model.User;
+import com.cinefy.Cinefy.service.CustomUserDetails;
+import com.cinefy.Cinefy.service.ToWatchMovieService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 public class HomeController {
     @Autowired
@@ -28,6 +32,9 @@ public class HomeController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private ToWatchMovieService toWatchMovieService;
 
     @GetMapping("/signup")
     public String signup(Model model, HttpSession session){
@@ -71,6 +78,11 @@ public class HomeController {
     @GetMapping("/dashboard")
     public String findHome(Model model){
         model.addAttribute("movieDTO", new MovieDTO());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
+        List<Movie> toWatchMovies = toWatchMovieService.getToWatchMoviesForUser(user);
+        model.addAttribute("toWatchMovies", toWatchMovies);
         return "/dashboard";
     }
 }

@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 public class ToWatchMovieService {
@@ -25,5 +28,11 @@ public class ToWatchMovieService {
             System.out.println("Failed to save ToWatchMovie: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+    public List<Movie> getToWatchMoviesForUser(User user){
+        List<ToWatchMovie> toWatchMovies = toWatchMovieRepository.findByUser(user);
+        return toWatchMovies.stream()
+                .map(ToWatchMovie::getMovie)
+                .collect(Collectors.toList());
     }
 }

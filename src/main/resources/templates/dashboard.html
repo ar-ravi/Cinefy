@@ -73,8 +73,8 @@
 					<ul class="list-group" th:each="movie : ${watchedMovies}">
 						<li class="list-group-item">
 							<span th:text="${movie.title}"></span> -
-							<span th:each="genre : ${movie.genres}" th:text="${genre.name} + ', '">Genres here</span>
 							(<span th:text="${movie.releaseYear}"></span>)
+							<span th:each="genre : ${movie.genres}" th:text="${genre.name} + ', '">Genres here</span>
 							<span class="badge bg-primary float-end" th:text="'Rating: ' + ${movie.rating}"></span>
 						</li>
 					</ul>
@@ -91,10 +91,14 @@
 				<div class="card-body">
 					<ul class="list-group" th:each="movie : ${toWatchMovies}">
 						<li class="list-group-item">
-							<span th:text="${movie.title}"></span> -
-							<span th:each="genre : ${movie.genres}" th:text="${genre.name} + ', '">Genres here</span>
-							(<span th:text="${movie.releaseYear}"></span>)
+							<span th:text="${movie.title}"></span>
+							(<span th:text="${movie.releaseYear}"></span>) -
+							<span th:each="genre, iterStat : ${movie.genres}">
+						        <span th:text="${genre.name}">Genre</span>
+						        <span th:if="${iterStat.index != iterStat.size - 1}">, </span>
+						    </span>
 						</li>
+
 					</ul>
 				</div>
 			</div>
