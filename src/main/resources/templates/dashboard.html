@@ -9,7 +9,8 @@
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 	<a class="navbar-brand" href="#">Movie Manager</a>
-	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+	        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 		<span class="navbar-toggler-icon"></span>
 	</button>
 	<div class="collapse navbar-collapse" id="navbarNav">
@@ -43,11 +44,13 @@
 					<form th:action="@{/api/movies}" method="post" th:object="${movieDTO}">
 						<div class="form-group">
 							<label for="title">Title</label>
-							<input type="text" class="form-control" id="title" name="title" th:field="*{title}" required>
+							<input type="text" class="form-control" id="title" name="title" th:field="*{title}"
+							       required>
 						</div>
 						<div class="form-group">
 							<label for="genres">Genres (comma-separated)</label>
-							<input type="text" class="form-control" id="genres" name="genres" th:field="*{genres}" required>
+							<input type="text" class="form-control" id="genres" name="genres" th:field="*{genres}"
+							       required>
 						</div>
 						<div class="form-group">
 							<label for="year">Release Year</label>
@@ -55,7 +58,8 @@
 						</div>
 						<div class="form-group">
 							<label for="rating">Rating</label>
-							<input type="number" class="form-control" id="rating" name="rating" th:field="*{rating}" step="0.1" max="5" min="0">
+							<input type="number" class="form-control" id="rating" name="rating" th:field="*{rating}"
+							       step="0.1" max="5" min="0">
 						</div>
 						<div class="form-group text-center mt-3">
 							<button type="submit" class="btn btn-success">Add Movie</button>
@@ -70,12 +74,24 @@
 			<div class="card">
 				<div class="card-header">Your Watched Movies</div>
 				<div class="card-body">
-					<ul class="list-group" th:each="movie : ${watchedMovies}">
-						<li class="list-group-item">
-							<span th:text="${movie.title}"></span> -
-							(<span th:text="${movie.releaseYear}"></span>)
-							<span th:each="genre : ${movie.genres}" th:text="${genre.name} + ', '">Genres here</span>
-							<span class="badge bg-primary float-end" th:text="'Rating: ' + ${movie.rating}"></span>
+					<ul class="list-group">
+						<li class="list-group-item" th:each="movie : ${watchedMovies}">
+							<div class="d-flex justify-content-between align-items-start">
+								<div>
+									<h5 class="mb-1" th:text="${movie.title}">Movie Title</h5>
+									<p class="mb-1">
+										<strong>Year:</strong> <span th:text="${movie.releaseYear}">Year</span>
+									</p>
+									<p class="mb-1">
+										<strong>Genres:</strong>
+										<span th:each="genre, iterStat : ${movie.genres}">
+                                    <span th:text="${genre.name}">Genre</span>
+                                    <span th:unless="${iterStat.last}">, </span>
+                                </span>
+									</p>
+								</div>
+								<span class="badge bg-primary" th:text="'Rating: ' + ${movie.rating}">Rating</span>
+							</div>
 						</li>
 					</ul>
 				</div>
@@ -89,16 +105,37 @@
 			<div class="card">
 				<div class="card-header">Movies to Watch</div>
 				<div class="card-body">
-					<ul class="list-group" th:each="movie : ${toWatchMovies}">
-						<li class="list-group-item">
-							<span th:text="${movie.title}"></span>
-							(<span th:text="${movie.releaseYear}"></span>) -
-							<span th:each="genre, iterStat : ${movie.genres}">
-						        <span th:text="${genre.name}">Genre</span>
-						        <span th:if="${iterStat.index != iterStat.size - 1}">, </span>
-						    </span>
+					<ul class="list-group">
+						<li class="list-group-item" th:each="movie : ${toWatchMovies}">
+							<div class="d-flex justify-content-between align-items-center">
+								<div>
+									<h5 class="mb-1" th:text="${movie.title}">Movie Title</h5>
+									<p class="mb-1">
+										<strong>Year:</strong> <span th:text="${movie.releaseYear}">Year</span>
+									</p>
+									<p class="mb-1">
+										<strong>Genres:</strong>
+										<span th:each="genre, iterStat : ${movie.genres}">
+			                              <span th:text="${genre.name}">Genre</span>
+			                              <span th:unless="${iterStat.last}">, </span>
+                                        </span>
+									</p>
+									<p class="mb-1" th:if="${movie.rating}">
+										<strong>Rating:</strong> <span th:text="${movie.rating}">Rating</span>
+									</p>
+								</div>
+								<div class="btn-group" role="group">
+									<form th:action="@{/api/movies/moveToWatched}" method="post" class="mr-2">
+										<input type="hidden" name="movieId" th:value="${movie.id}"/>
+										<button type="submit" class="btn btn-success btn-sm">Move to Watched</button>
+									</form>
+									<form th:action="@{/api/movies/removeFromToWatch}" method="post">
+										<input type="hidden" name="movieId" th:value="${movie.id}"/>
+										<button type="submit" class="btn btn-danger btn-sm">Remove</button>
+									</form>
+								</div>
+							</div>
 						</li>
-
 					</ul>
 				</div>
 			</div>

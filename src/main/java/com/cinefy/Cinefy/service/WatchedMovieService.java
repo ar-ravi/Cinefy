@@ -7,17 +7,26 @@ import com.cinefy.Cinefy.model.WatchedMovie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class WatchedMovieService {
 
     @Autowired
     private WatchedMovieRepository watchedMovieRepository;
 
-    public void addWatchedMovie(User user, Movie movie, Integer rating){
+    public void addWatchedMovie(User user, Movie movie){
         WatchedMovie watchedMovie = new WatchedMovie();
         watchedMovie.setUser(user);
         watchedMovie.setMovie(movie);
-        watchedMovie.setRating(rating);
         watchedMovieRepository.save(watchedMovie);
     }
+
+    public List<Movie> getMoviesByUser(User user){
+        return watchedMovieRepository.findByUser(user)
+                .stream().map(WatchedMovie::getMovie).collect(Collectors.toList());
+    }
+
+
 }

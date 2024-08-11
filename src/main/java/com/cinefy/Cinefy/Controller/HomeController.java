@@ -7,6 +7,7 @@ import com.cinefy.Cinefy.model.Movie;
 import com.cinefy.Cinefy.model.User;
 import com.cinefy.Cinefy.service.CustomUserDetails;
 import com.cinefy.Cinefy.service.ToWatchMovieService;
+import com.cinefy.Cinefy.service.WatchedMovieService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +36,9 @@ public class HomeController {
 
     @Autowired
     private ToWatchMovieService toWatchMovieService;
+
+    @Autowired
+    private WatchedMovieService watchedMovieService;
 
     @GetMapping("/signup")
     public String signup(Model model, HttpSession session){
@@ -82,6 +86,8 @@ public class HomeController {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User user = userDetails.getUser();
         List<Movie> toWatchMovies = toWatchMovieService.getToWatchMoviesForUser(user);
+        List<Movie> watchedMovies = watchedMovieService.getMoviesByUser(user);
+        model.addAttribute("watchedMovies", watchedMovies);
         model.addAttribute("toWatchMovies", toWatchMovies);
         return "/dashboard";
     }

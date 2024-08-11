@@ -1,5 +1,6 @@
 package com.cinefy.Cinefy.Controller;
 
+import com.cinefy.Cinefy.dao.WatchedMovieRepository;
 import com.cinefy.Cinefy.dto.MovieDTO;
 import com.cinefy.Cinefy.model.Genre;
 import com.cinefy.Cinefy.model.Movie;
@@ -33,9 +34,25 @@ public class MovieController {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
+    @Autowired
+    private WatchedMovieService watchedMovieService;
+
     @GetMapping("/genre/{genre}")
     public List<Movie> getMoviesByGenre(@PathVariable String genre){
         return movieService.getMoviesByGenre(genre);
+    }
+
+    public User getUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = null;
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            user = userDetails.getUser();
+        }
+        if(user == null){
+            System.out.println("ISSUE LIES IN FETCHING USER HERE.");
+        }
+        return user;
     }
 
     @PostMapping
@@ -45,19 +62,22 @@ public class MovieController {
         List<Genre> genres = genreService.getOrCreateGenres(genreNames);
         Movie movie = new Movie(movieDTO.getTitle(), genres, movieDTO.getYear(), movieDTO.getRating());
         movieService.addMovie(movie);
-        User user = null;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            user = userDetails.getUser();
-        }
-        if(user == null){
-            System.out.println("ISSUE LIES HERE.");
-        }
-        System.out.println(user.toString());
-
+        User user = getUser();
         toWatchMovieService.addToWatchMovie(user, movie);
         return "redirect:/dashboard";
+    }
+    @PostMapping("/moveToWatched")
+    public String moveToWatched(@RequestParam Long movieId){
+        User currentUser = getUser();
+        movieService.moveToWatched(currentUser, movieId);
+        return "redirect:/dashboard";
+    }
 
+    @PostMapping("/removeFromToWatch")
+    public String removeMovie(@RequestParam Long movieId){
+        Movie movie = movieService.getMovieById(movieId);
+        User user = getUser();
+        movieService.deleteMovie(user, movieId);
+        return "redirect:/dashboard";
     }
 }

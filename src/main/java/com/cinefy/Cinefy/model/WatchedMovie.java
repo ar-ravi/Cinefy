@@ -15,15 +15,11 @@ public class WatchedMovie {
     @ManyToOne
     private Movie movie;
 
-    private Integer rating;
-
     public WatchedMovie() {}
 
-    public WatchedMovie(Long id, User user, Movie movie, Integer rating) {
-        this.id = id;
+    public WatchedMovie(User user, Movie movie) {
         this.user = user;
         this.movie = movie;
-        this.rating = rating;
     }
 
     public Long getId() {
@@ -50,13 +46,6 @@ public class WatchedMovie {
         this.movie = movie;
     }
 
-    public Integer getRating() {
-        return rating;
-    }
-
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
 
     @Override
     public String toString() {
@@ -64,7 +53,6 @@ public class WatchedMovie {
                 "id=" + id +
                 ", user=" + user +
                 ", movie=" + movie +
-                ", rating=" + rating +
                 '}';
     }
 }

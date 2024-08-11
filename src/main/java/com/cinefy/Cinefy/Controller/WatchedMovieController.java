@@ -16,6 +16,6 @@ public class WatchedMovieController {
 
     @PostMapping
     public void addWatchedMovie(@RequestBody WatchedMovie watchedMovie){
-        watchedMovieService.addWatchedMovie(watchedMovie.getUser(), watchedMovie.getMovie(), watchedMovie.getRating());
+        watchedMovieService.addWatchedMovie(watchedMovie.getUser(), watchedMovie.getMovie());
     }
 }

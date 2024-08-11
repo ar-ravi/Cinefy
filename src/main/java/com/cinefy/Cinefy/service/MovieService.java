@@ -2,18 +2,27 @@ package com.cinefy.Cinefy.service;
 
 import com.cinefy.Cinefy.dao.GenreRepository;
 import com.cinefy.Cinefy.dao.MovieRepository;
-import com.cinefy.Cinefy.model.Genre;
-import com.cinefy.Cinefy.model.Movie;
+import com.cinefy.Cinefy.dao.ToWatchMovieRepository;
+import com.cinefy.Cinefy.dao.WatchedMovieRepository;
+import com.cinefy.Cinefy.model.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class MovieService {
     @Autowired
     private MovieRepository movieRepository;
+
+    @Autowired
+    private ToWatchMovieRepository toWatchMovieRepository;
+
+    @Autowired
+    private WatchedMovieRepository watchedMovieRepository;
 
     @Autowired
     private GenreRepository genreRepository;
@@ -59,7 +68,22 @@ public class MovieService {
         return movieRepository.save(movie);
     }
 
-    public void deleteMovie(Long id){
+    public void deleteMovie(User user, Long id){
+        Movie movie = getMovieById(id);
+        ToWatchMovie toWatchMovie = toWatchMovieRepository.findByUserAndMovie(user, movie)
+                .orElseThrow(() -> new RuntimeException("Movie not found in To Watch List"));
+        toWatchMovieRepository.delete(toWatchMovie);
         movieRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void moveToWatched(User user, Long movieId){
+        Movie movie = getMovieById(movieId);
+        ToWatchMovie toWatchMovie = toWatchMovieRepository.findByUserAndMovie(user, movie)
+                .orElseThrow(() -> new RuntimeException("Movie not found in To Watch List"));
+        WatchedMovie watchedMovie = new WatchedMovie(user, toWatchMovie.getMovie());
+        watchedMovieRepository.save(watchedMovie);
+        toWatchMovieRepository.delete(toWatchMovie);
+
     }
 }
