@@ -2,6 +2,7 @@ package com.cinefy.Cinefy.service;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -20,6 +21,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Primary
     public UserDetailsService getUserDetailsService(){
         return new CustomUserDetailsService();
     }
