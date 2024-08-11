@@ -45,13 +45,18 @@ public class MovieController {
         List<Genre> genres = genreService.getOrCreateGenres(genreNames);
         Movie movie = new Movie(movieDTO.getTitle(), genres, movieDTO.getYear(), movieDTO.getRating());
         movieService.addMovie(movie);
+        User user = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        System.out.println(username);
-        User user = (User)userDetailsService.loadUserByUsername(username);
-//        System.out.println(user);
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            user = userDetails.getUser();
+        }
+        if(user == null){
+            System.out.println("ISSUE LIES HERE.");
+        }
+        System.out.println(user.toString());
 
-//        toWatchMovieService.addToWatchMovie(user, movie);
+        toWatchMovieService.addToWatchMovie(user, movie);
         return "redirect:/dashboard";
 
     }

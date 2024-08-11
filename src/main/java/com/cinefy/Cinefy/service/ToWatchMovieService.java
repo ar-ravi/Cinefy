@@ -22,7 +22,7 @@ public class ToWatchMovieService {
             System.out.println("Saving ToWatchMovie: User - " + user.getUsername() + ", Movie - " + movie.getTitle());
             toWatchMovieRepository.save(toWatchMovie);
         } catch (Exception e) {
-            System.err.println("Failed to save ToWatchMovie: " + e.getMessage());
+            System.out.println("Failed to save ToWatchMovie: " + e.getMessage());
             e.printStackTrace();
         }
     }
