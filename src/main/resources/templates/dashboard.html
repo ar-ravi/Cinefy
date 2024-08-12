@@ -141,6 +141,30 @@
 			</div>
 		</div>
 	</div>
+	<!-- Recommended Movies Section -->
+	<div class="row mt-5">
+		<div class="col-md-12">
+			<div class="card">
+				<div class="card-header">Recommended Movies</div>
+				<div class="card-body">
+					<div style="max-height: 400px; overflow-y: auto;">
+						<ul class="list-group">
+							<li class="list-group-item" th:each="movieRec : ${movieRecs}">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<h5 class="mb-1" th:text="${movieRec.movie}">Movie Title (Year)</h5>
+										<p class="mb-1">
+											<strong>Score:</strong> <span th:text="${#numbers.formatDecimal(movieRec.score, 1, 4)}">Score</span>
+										</p>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Bootstrap JS -->

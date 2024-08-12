@@ -37,6 +37,9 @@ public class MovieController {
     @Autowired
     private WatchedMovieService watchedMovieService;
 
+    @Autowired
+    private RecommendationService recommendationService;
+
     @GetMapping("/genre/{genre}")
     public List<Movie> getMoviesByGenre(@PathVariable String genre){
         return movieService.getMoviesByGenre(genre);
@@ -70,6 +73,10 @@ public class MovieController {
     public String moveToWatched(@RequestParam Long movieId){
         User currentUser = getUser();
         movieService.moveToWatched(currentUser, movieId);
+
+
+
+
         return "redirect:/dashboard";
     }
 

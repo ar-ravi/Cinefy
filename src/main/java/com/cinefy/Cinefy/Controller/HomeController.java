@@ -6,6 +6,7 @@ import com.cinefy.Cinefy.dto.MovieDTO;
 import com.cinefy.Cinefy.model.Movie;
 import com.cinefy.Cinefy.model.User;
 import com.cinefy.Cinefy.service.CustomUserDetails;
+import com.cinefy.Cinefy.service.RecommendationService;
 import com.cinefy.Cinefy.service.ToWatchMovieService;
 import com.cinefy.Cinefy.service.WatchedMovieService;
 import jakarta.servlet.http.HttpSession;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -39,6 +43,9 @@ public class HomeController {
 
     @Autowired
     private WatchedMovieService watchedMovieService;
+
+    @Autowired
+    private RecommendationService recommendationService;
 
     @GetMapping("/signup")
     public String signup(Model model, HttpSession session){
@@ -89,6 +96,16 @@ public class HomeController {
         List<Movie> watchedMovies = watchedMovieService.getMoviesByUser(user);
         model.addAttribute("watchedMovies", watchedMovies);
         model.addAttribute("toWatchMovies", toWatchMovies);
+
+        List<String> movieList = toWatchMovies.stream().map(curMovie -> {
+            return curMovie.getTitle() + " (" + curMovie.getReleaseYear() + ")";
+        }).collect(Collectors.toUnmodifiableList());
+
+        List<Map<String, Object>> movieRecs = recommendationService.getRecommendations(movieList);
+        for(Map curMap: movieRecs){
+            System.out.println(curMap.get("movie"));
+        }
+        model.addAttribute("movieRecs", movieRecs);
         return "/dashboard";
     }
 }
