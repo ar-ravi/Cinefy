@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CinefyApplication {
 
 	public static void main(String[] args) {
+		// start of my spring boot applicationq
 		SpringApplication.run(CinefyApplication.class, args);
 	}
 
